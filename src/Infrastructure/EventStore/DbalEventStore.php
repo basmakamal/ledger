@@ -64,6 +64,18 @@ final class DbalEventStore implements EventStore
         );
     }
 
+    public function readAll(): iterable
+    {
+        $result = $this->connection->executeQuery(
+            'SELECT aggregate_id, version, event_type, payload, recorded_at FROM '
+            .EventStoreSchema::TABLE.' ORDER BY id',
+        );
+
+        while (false !== ($row = $result->fetchAssociative())) {
+            yield $this->toStoredEvent($this->column($row, 'aggregate_id'), $row);
+        }
+    }
+
     /**
      * @param array<string, mixed> $row
      */

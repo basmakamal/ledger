@@ -40,4 +40,11 @@ final class InMemoryEventStore implements EventStore
     {
         return $this->streams[$aggregateId] ?? [];
     }
+
+    public function readAll(): iterable
+    {
+        foreach ($this->streams as $stream) {
+            yield from $stream;
+        }
+    }
 }
