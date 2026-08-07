@@ -1,0 +1,44 @@
+deptrac:
+  paths:
+    - src
+
+  layers:
+    - name: Domain
+      collectors:
+        - type: classLike
+          value: Ledger\\Domain\\.*
+    - name: Application
+      collectors:
+        - type: classLike
+          value: Ledger\\Application\\.*
+    - name: Infrastructure
+      collectors:
+        - type: classLike
+          value: Ledger\\Infrastructure\\.*
+    - name: Presentation
+      collectors:
+        - type: classLike
+          value: Ledger\\Presentation\\.*
+    - name: Vendor
+      collectors:
+        - type: classLike
+          value: (Symfony|Doctrine|Psr)\\.*
+    - name: Kernel
+      collectors:
+        - type: classLike
+          value: Ledger\\Kernel
+
+  ruleset:
+    Domain: ~
+    Application:
+      - Domain
+    Infrastructure:
+      - Domain
+      - Application
+      - Vendor
+    Presentation:
+      - Application
+      - Domain
+      - Vendor
+    Kernel:
+      - Vendor
