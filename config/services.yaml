@@ -22,6 +22,13 @@ services:
             - '../src/Domain/'
             - '../src/Kernel.php'
 
+    # Handlers stay plain invokables so the application layer never imports
+    # the framework; Messenger learns about them here instead of via attributes.
+    Ledger\Application\Wallet\Handler\:
+        resource: '../src/Application/Wallet/Handler/'
+        tags:
+            - { name: messenger.message_handler, bus: command.bus }
+
     Ledger\Application\Port\Clock: '@Ledger\Infrastructure\Time\SystemClock'
     Ledger\Application\Port\EventStore: '@Ledger\Infrastructure\EventStore\DbalEventStore'
     Ledger\Domain\Wallet\WalletRepository: '@Ledger\Infrastructure\Repository\EventSourcedWalletRepository'
