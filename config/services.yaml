@@ -30,7 +30,16 @@ services:
             - { name: messenger.message_handler, bus: command.bus }
 
     Ledger\Application\Port\Clock: '@Ledger\Infrastructure\Time\SystemClock'
-    Ledger\Application\Port\EventStore: '@Ledger\Infrastructure\EventStore\DbalEventStore'
+    Ledger\Application\Port\EventStore: '@Ledger\Infrastructure\EventStore\PublishingEventStore'
+    Ledger\Application\Port\EventPublisher: '@Ledger\Infrastructure\Bus\MessengerEventPublisher'
+
+    Ledger\Infrastructure\Bus\MessengerEventPublisher:
+        arguments:
+            $eventBus: '@event.bus'
+
+    Ledger\Infrastructure\EventStore\PublishingEventStore:
+        arguments:
+            $inner: '@Ledger\Infrastructure\EventStore\DbalEventStore'
     Ledger\Domain\Wallet\WalletRepository: '@Ledger\Infrastructure\Repository\EventSourcedWalletRepository'
 
     # Grows as aggregates are added; keeping it explicit means a renamed class
