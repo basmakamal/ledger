@@ -56,7 +56,9 @@ jobs:
       - run: vendor/bin/phpunit
 
   # The event store is written against portable SQL; this job proves it on the
-  # engine the service actually targets in production.
+  # engine the service actually targets in production. Doctrine appends a
+  # "_test" suffix to the database name under APP_ENV=test, so that database
+  # has to be created before the kernel can boot.
   tests-postgres:
     runs-on: ubuntu-latest
     services:
@@ -84,4 +86,5 @@ jobs:
           extensions: pdo_pgsql
           coverage: none
       - run: composer install --no-interaction --no-progress
+      - run: php bin/console --env=test doctrine:database:create --if-not-exists
       - run: vendor/bin/phpunit
