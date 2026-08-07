@@ -26,6 +26,17 @@ final class Wallet extends AggregateRoot
         return $wallet;
     }
 
+    /**
+     * @param iterable<DomainEvent> $events
+     */
+    public static function fromStream(WalletId $id, iterable $events): self
+    {
+        $wallet = new self($id);
+        $wallet->replay($events);
+
+        return $wallet;
+    }
+
     public function deposit(Money $amount): void
     {
         $this->assertAcceptable($amount);

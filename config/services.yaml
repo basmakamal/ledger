@@ -24,12 +24,16 @@ services:
 
     Ledger\Application\Port\Clock: '@Ledger\Infrastructure\Time\SystemClock'
     Ledger\Application\Port\EventStore: '@Ledger\Infrastructure\EventStore\DbalEventStore'
+    Ledger\Domain\Wallet\WalletRepository: '@Ledger\Infrastructure\Repository\EventSourcedWalletRepository'
 
     # Grows as aggregates are added; keeping it explicit means a renamed class
     # never silently orphans events already written to the stream.
     Ledger\Infrastructure\EventStore\EventTypeMap:
         arguments:
-            $map: []
+            $map:
+                wallet.opened: 'Ledger\Domain\Wallet\Event\WalletOpened'
+                wallet.funds_deposited: 'Ledger\Domain\Wallet\Event\FundsDeposited'
+                wallet.funds_withdrawn: 'Ledger\Domain\Wallet\Event\FundsWithdrawn'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
