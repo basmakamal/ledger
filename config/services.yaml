@@ -37,7 +37,13 @@ services:
             - { name: messenger.message_handler, bus: event.bus, handles: 'Ledger\Domain\Wallet\Event\FundsDeposited', method: whenFundsDeposited }
             - { name: messenger.message_handler, bus: event.bus, handles: 'Ledger\Domain\Wallet\Event\FundsWithdrawn', method: whenFundsWithdrawn }
 
+    Ledger\Infrastructure\Projection\WalletTransactionProjector:
+        tags:
+            - { name: messenger.message_handler, bus: event.bus, handles: 'Ledger\Domain\Wallet\Event\FundsDeposited', method: whenFundsDeposited }
+            - { name: messenger.message_handler, bus: event.bus, handles: 'Ledger\Domain\Wallet\Event\FundsWithdrawn', method: whenFundsWithdrawn }
+
     Ledger\Application\Wallet\Query\BalanceReader: '@Ledger\Infrastructure\Projection\DbalBalanceReader'
+    Ledger\Application\Wallet\Query\TransactionHistoryReader: '@Ledger\Infrastructure\Projection\DbalTransactionHistoryReader'
 
     Ledger\Application\Port\Clock: '@Ledger\Infrastructure\Time\SystemClock'
     Ledger\Application\Port\EventStore: '@Ledger\Infrastructure\EventStore\PublishingEventStore'
