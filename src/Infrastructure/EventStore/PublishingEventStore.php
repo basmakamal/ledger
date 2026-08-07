@@ -31,4 +31,9 @@ final class PublishingEventStore implements EventStore
     {
         return $this->inner->load($aggregateId);
     }
+
+    public function readAll(): iterable
+    {
+        return $this->inner->readAll();
+    }
 }

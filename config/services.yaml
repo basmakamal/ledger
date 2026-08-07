@@ -29,6 +29,14 @@ services:
         tags:
             - { name: messenger.message_handler, bus: command.bus }
 
+    _instanceof:
+        Ledger\Application\Port\Projector:
+            tags: ['ledger.projector']
+
+    Ledger\Application\Projection\RebuildProjections:
+        arguments:
+            $projectors: !tagged_iterator ledger.projector
+
     # One tag per event so each projection method is registered explicitly;
     # a projector silently not subscribed is the classic event-sourcing bug.
     Ledger\Infrastructure\Projection\WalletBalanceProjector:

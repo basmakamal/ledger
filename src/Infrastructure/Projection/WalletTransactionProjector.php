@@ -7,10 +7,12 @@ namespace Ledger\Infrastructure\Projection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Ledger\Application\Port\Clock;
+use Ledger\Application\Port\Projector;
+use Ledger\Domain\Shared\DomainEvent;
 use Ledger\Domain\Wallet\Event\FundsDeposited;
 use Ledger\Domain\Wallet\Event\FundsWithdrawn;
 
-final class WalletTransactionProjector
+final class WalletTransactionProjector implements Projector
 {
     public const DEPOSIT = 'deposit';
     public const WITHDRAWAL = 'withdrawal';
@@ -29,6 +31,15 @@ final class WalletTransactionProjector
     public function whenFundsWithdrawn(FundsWithdrawn $event): void
     {
         $this->record($event->walletId, self::WITHDRAWAL, $event->minorUnits, $event->currency);
+    }
+
+    public function project(DomainEvent $event): void
+    {
+        match (true) {
+            $event instanceof FundsDeposited => $this->whenFundsDeposited($event),
+            $event instanceof FundsWithdrawn => $this->whenFundsWithdrawn($event),
+            default => null,
+        };
     }
 
     public function reset(): void
