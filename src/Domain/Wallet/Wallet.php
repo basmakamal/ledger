@@ -7,6 +7,7 @@ namespace Ledger\Domain\Wallet;
 use Ledger\Domain\Shared\AggregateRoot;
 use Ledger\Domain\Shared\DomainEvent;
 use Ledger\Domain\Wallet\Event\FundsDeposited;
+use Ledger\Domain\Wallet\Event\FundsWithdrawn;
 use Ledger\Domain\Wallet\Event\WalletOpened;
 
 final class Wallet extends AggregateRoot
@@ -32,6 +33,17 @@ final class Wallet extends AggregateRoot
         $this->recordThat(new FundsDeposited($this->id->value, $amount->minorUnits, $amount->currency));
     }
 
+    public function withdraw(Money $amount): void
+    {
+        $this->assertAcceptable($amount);
+
+        if ($this->balance->isLessThan($amount)) {
+            throw new InsufficientFunds($this->balance, $amount);
+        }
+
+        $this->recordThat(new FundsWithdrawn($this->id->value, $amount->minorUnits, $amount->currency));
+    }
+
     public function aggregateId(): string
     {
         return $this->id->value;
@@ -52,6 +64,9 @@ final class Wallet extends AggregateRoot
         match (true) {
             $event instanceof WalletOpened => $this->balance = Money::zero($event->currency),
             $event instanceof FundsDeposited => $this->balance = $this->balance->add(
+                Money::of($event->minorUnits, $event->currency),
+            ),
+            $event instanceof FundsWithdrawn => $this->balance = $this->balance->subtract(
                 Money::of($event->minorUnits, $event->currency),
             ),
             default => null,
