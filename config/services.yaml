@@ -22,5 +22,14 @@ services:
             - '../src/Domain/'
             - '../src/Kernel.php'
 
+    Ledger\Application\Port\Clock: '@Ledger\Infrastructure\Time\SystemClock'
+    Ledger\Application\Port\EventStore: '@Ledger\Infrastructure\EventStore\DbalEventStore'
+
+    # Grows as aggregates are added; keeping it explicit means a renamed class
+    # never silently orphans events already written to the stream.
+    Ledger\Infrastructure\EventStore\EventTypeMap:
+        arguments:
+            $map: []
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

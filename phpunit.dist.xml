@@ -15,6 +15,8 @@
         <ini name="error_reporting" value="-1" />
         <server name="APP_ENV" value="test" force="true" />
         <server name="SHELL_VERBOSITY" value="-1" />
+        <!-- CI overrides this to run the same store tests against PostgreSQL. -->
+        <env name="EVENT_STORE_DSN" value="sqlite:///:memory:" />
     </php>
 
     <testsuites>

@@ -75,6 +75,7 @@ jobs:
           --health-retries 10
     env:
       DATABASE_URL: postgresql://app:app@127.0.0.1:5432/ledger?serverVersion=16&charset=utf8
+      EVENT_STORE_DSN: postgresql://app:app@127.0.0.1:5432/ledger
     steps:
       - uses: actions/checkout@v5
       - uses: shivammathur/setup-php@v2
