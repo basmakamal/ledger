@@ -1,0 +1,12 @@
+# DBAL only. This service stores state as an append-only event stream and
+# builds its read models with explicit SQL, so there is no ORM mapping.
+doctrine:
+    dbal:
+        url: '%env(resolve:DATABASE_URL)%'
+        profiling_collect_backtrace: '%kernel.debug%'
+        use_savepoints: true
+
+when@test:
+    doctrine:
+        dbal:
+            dbname_suffix: '_test%env(default::TEST_TOKEN)%'
